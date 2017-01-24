@@ -1,3 +1,5 @@
-.idea
-target
-*.iml
+/.idea
+/target
+ProfileBuilder.iml
+profile-builder.iml
+
