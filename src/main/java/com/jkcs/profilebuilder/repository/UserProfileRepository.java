@@ -11,5 +11,4 @@ import java.util.List;
  */
 public interface UserProfileRepository extends JpaRepository<UserProfile, Integer> {
 
-
 }
