@@ -1,5 +1,7 @@
 package com.jkcs.profilebuilder.model;
 
+import org.omg.CORBA.Object;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +29,7 @@ public class UserProfile {
     private String phone;
 
     public UserProfile()  {
+        id = 0;
     }
 
 
@@ -123,6 +126,30 @@ public class UserProfile {
         return "UserProfile [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
                 + ", address=" + address + ", gender=" + gender + ", country=" + country + ", dob=" + dob +
                 ", phone=" + phone + "]";
+    }
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
+
+
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id != other.getId())
+            return false;
+        return true;
+
     }
 
 }
