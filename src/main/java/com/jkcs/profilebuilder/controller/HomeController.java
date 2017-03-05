@@ -1,10 +1,7 @@
 package com.jkcs.profilebuilder.controller;
 
-import com.jkcs.profilebuilder.model.User;
-import com.jkcs.profilebuilder.model.UserProfile;
-import com.jkcs.profilebuilder.repository.UserProfileRepository;
-import com.jkcs.profilebuilder.repository.UserProfileRepositoryImpl;
-import com.jkcs.profilebuilder.repository.UserRepository;
+import com.jkcs.profilebuilder.model.*;
+import com.jkcs.profilebuilder.repository.*;
 import com.jkcs.profilebuilder.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +17,7 @@ import java.util.List;
  * Created by Amila on 1/24/17.
  */
 @RestController
+@RequestMapping("userprofile")
 public class HomeController {
 
 
@@ -30,7 +28,21 @@ public class HomeController {
         this.userProfileRepository = userProfileRepository;
     }
 
-//    @Autowired
+    private SkillsRepository skillsRepository;
+
+    @Autowired
+    public void setSkillsRepository(SkillsRepository skillsRepository) {
+        this.skillsRepository = skillsRepository;
+    }
+
+    private SkillTypeRepository skillTypeRepository;
+
+    @Autowired
+    public void setSkillTypeRepository(SkillTypeRepository skillTypeRepository) {
+        this.skillTypeRepository = skillTypeRepository;
+    }
+
+    //    @Autowired
 //    private UserProfileRepositoryImpl userProfileRepository;
 
  //   @RequestMapping("index")
@@ -46,6 +58,7 @@ public class HomeController {
 //
 //        return "index";
 //    }
+
 
     //------Retrieve All Users------
     @RequestMapping(value = "/userprofile/", method = RequestMethod.GET)
@@ -73,11 +86,15 @@ public class HomeController {
     @RequestMapping(value = "/userprofile/", method = RequestMethod.POST)
     public ResponseEntity<Void> createUserProfile(@RequestBody UserProfile userprofile, UriComponentsBuilder ucBuilder){
         System.out.println("Creating Userprofile " +userprofile.getFirstname()+" "+userprofile.getLastname());
-
-        userProfileRepository.save(userprofile);
-
+        System.out.println(userprofile.getCandidate_id());
+        UserProfile up = userProfileRepository.save(userprofile);
+//        A a = new A();
+//        a.setUserProfile(up);
+//        a.setSkills(list);
+//        repository.save(a);
+        System.out.println(up.getCandidate_id());
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/userprofiles/{id}").buildAndExpand(userprofile.getId()).toUri());
+        headers.setLocation(ucBuilder.path("/userprofiles/{id}").buildAndExpand(userprofile.getCandidate_id()).toUri());
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
         }
 
@@ -128,6 +145,19 @@ public class HomeController {
 
         userProfileRepository.deleteAll();
         return new ResponseEntity<UserProfile>(HttpStatus.NO_CONTENT);
+
+    }
+
+
+    public static void main(String[] args) {
+        SkillType st = new SkillType();
+        st.setSt_name("Programming");
+        st.setSt_name("Graphics Designing");
+        st.setSt_name("Developing");
+        st.setSt_name("Technical");
+
+
+
     }
 
 }

@@ -1,12 +1,14 @@
 package com.jkcs.profilebuilder.model;
 
-import org.omg.CORBA.Object;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by AmilaVM on 1/26/2017.
@@ -16,7 +18,7 @@ public class UserProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Integer candidate_id;
     private String firstname;
     private String lastname;
     private String email;
@@ -28,17 +30,38 @@ public class UserProfile {
     private Date dob;
     private String phone;
 
+//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinTable(name = "users_with_skills")
+//    private List<Skills> skills;
+
+    @OneToMany(mappedBy = "userprofile" , fetch = FetchType.LAZY ,
+    cascade = {CascadeType.PERSIST , CascadeType.MERGE})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE ,
+    org.hibernate.annotations.CascadeType.DELETE})
+    private List<UserprofileSkillRate> skills;
+
+//    @OneToOne
+//    @JoinColumn(name = "CANDIDATE_ID")
+//    private CandidateUser candidateUser;
+
     public UserProfile()  {
-        id = 0;
+
     }
 
 
-    public Integer getId() {
-        return id;
+//    public CandidateUser getCandidateUser() {
+//        return candidateUser;
+//    }
+//    public void setCandidateUser(CandidateUser candidateUser) {
+//        this.candidateUser = candidateUser;
+//    }
+
+    public Integer getCandidate_id() {
+        return candidate_id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCandidate_id(Integer candidate_id) {
+        this.candidate_id = candidate_id;
     }
 
     public String getFirstname() {
@@ -121,9 +144,26 @@ public class UserProfile {
         this.phone = phone;
     }
 
+//    public List<Skills> getSkills() {
+//        return skills;
+//    }
+
+//    public void setSkills(List<Skills> skills) {
+//        this.skills = skills;
+//    }
+
+
+    public List<UserprofileSkillRate> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<UserprofileSkillRate> skills) {
+        this.skills = skills;
+    }
+
     @Override
     public String toString() {
-        return "UserProfile [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
+        return "UserProfile [candidate_id=" + candidate_id + ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
                 + ", address=" + address + ", gender=" + gender + ", country=" + country + ", dob=" + dob +
                 ", phone=" + phone + "]";
     }
@@ -133,23 +173,14 @@ public class UserProfile {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + (int) (candidate_id ^ (candidate_id >>> 32));
         return result;
     }
 
 
+    @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        User other = (User) obj;
-        if (id != other.getId())
-            return false;
-        return true;
-
+        UserProfile up = (UserProfile) obj;
+        return up.getCandidate_id().equals(this.candidate_id);
     }
-
 }

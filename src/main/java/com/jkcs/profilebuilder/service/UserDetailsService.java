@@ -46,6 +46,8 @@ public class UserDetailsService implements org.springframework.security.core.use
             authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
         }
 
+        /*this for;  check whether a user has a permission to access his desired resource. (user requests for a resource(eg:views etc.),
+        but the system checks the role of him and according to that role whether he can access the desired resource) */
 
 //        org.springframework.security.core.userdetails.User securityUser =
 //                new org.springframework.security.core.userdetails.User(user.getUsername(),)
