@@ -17,31 +17,32 @@ import java.util.List;
  * Created by Amila on 1/24/17.
  */
 @RestController
-@RequestMapping("userprofile")
 public class HomeController {
 
 
     private UserProfileRepository userProfileRepository;
-
     @Autowired
     public void setUserProfileRepository(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
     }
 
     private SkillsRepository skillsRepository;
-
     @Autowired
     public void setSkillsRepository(SkillsRepository skillsRepository) {
         this.skillsRepository = skillsRepository;
     }
 
     private SkillTypeRepository skillTypeRepository;
-
     @Autowired
     public void setSkillTypeRepository(SkillTypeRepository skillTypeRepository) {
         this.skillTypeRepository = skillTypeRepository;
     }
 
+    private UserProfileSkillRateRepository userProfileSkillRateRepository;
+    @Autowired
+    public void setUserProfileSkillRateRepository(UserProfileSkillRateRepository userProfileSkillRateRepository) {
+        this.userProfileSkillRateRepository = userProfileSkillRateRepository;
+    }
     //    @Autowired
 //    private UserProfileRepositoryImpl userProfileRepository;
 
@@ -82,22 +83,46 @@ public class HomeController {
         return new ResponseEntity<UserProfile>(userProfile, HttpStatus.OK);
     }
 
+
+
+
     //------Create A User------
     @RequestMapping(value = "/userprofile/", method = RequestMethod.POST)
     public ResponseEntity<Void> createUserProfile(@RequestBody UserProfile userprofile, UriComponentsBuilder ucBuilder){
         System.out.println("Creating Userprofile " +userprofile.getFirstname()+" "+userprofile.getLastname());
         System.out.println(userprofile.getCandidate_id());
         UserProfile up = userProfileRepository.save(userprofile);
-//        A a = new A();
-//        a.setUserProfile(up);
-//        a.setSkills(list);
-//        repository.save(a);
+
+        UserprofileSkillRate a = new UserprofileSkillRate();
+        a.setUserprofile(up);
+       // a.setSkill(list);
+        userProfileSkillRateRepository.save(a);
+
         System.out.println(up.getCandidate_id());
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ucBuilder.path("/userprofiles/{id}").buildAndExpand(userprofile.getCandidate_id()).toUri());
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
         }
 
+    @RequestMapping(value = "/userprofile2/", method = RequestMethod.POST)
+    public ResponseEntity<UserprofileSkillRate> createUserProfile2(@RequestBody UserprofileSkillRate userprofileSkillRate){
+        UserProfile userProfileUnSaved = userprofileSkillRate.getUserprofile();
+        Skills skillsUnsaved = userprofileSkillRate.getSkill();
+
+        UserProfile userProfileSaved = userProfileRepository.save(userProfileUnSaved);
+        //Skills skillsSaved = skillsRepository.save(skillsUnsaved);
+
+        UserprofileSkillRate newUserprofileSkillRate = new UserprofileSkillRate();
+        newUserprofileSkillRate.setSkill(skillsUnsaved);
+        newUserprofileSkillRate.setUserprofile(userProfileSaved);
+        newUserprofileSkillRate.setRate(userprofileSkillRate.getRate());
+
+        //UserType t =UserType.valueOf("we");
+
+        userProfileSkillRateRepository.save(newUserprofileSkillRate);
+
+        return new ResponseEntity<UserprofileSkillRate>(newUserprofileSkillRate, HttpStatus.OK);
+    }
     //------Update A User------
     @RequestMapping(value = "/userprofile/{id}", method = RequestMethod.PUT)
     public ResponseEntity<UserProfile> updateUserProfile(@PathVariable("id") Integer id, @RequestBody UserProfile userProfile){
@@ -149,16 +174,14 @@ public class HomeController {
     }
 
 
-    public static void main(String[] args) {
-        SkillType st = new SkillType();
-        st.setSt_name("Programming");
-        st.setSt_name("Graphics Designing");
-        st.setSt_name("Developing");
-        st.setSt_name("Technical");
-
-
-
-    }
+//    public static void main(String[] args) {
+//        SkillType st = new SkillType();
+//        st.setSt_name("Programming");
+//        st.setSt_name("Graphics Designing");
+//        st.setSt_name("Developing");
+//        st.setSt_name("Technical");
+//
+//}
 
 }
 
