@@ -21,7 +21,7 @@ public class Skills {
 
     @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinColumn(name = "Skill_type_id")
-    private SkillType skillType;
+   // private SkillType skillType;
 
 //    @ManyToMany(mappedBy = "skills")
 //    private List<UserProfile> userProfiles;
@@ -51,31 +51,6 @@ public class Skills {
     }
 
 
-
-//    public String getSkillRate() {
-//        return skillRate;
-//    }
-//
-//    public void setSkillRate(String skillRate) {
-//        this.skillRate = skillRate;
-//    }
-
-
-    public SkillType getSkillType() {
-        return skillType;
-    }
-
-    public void setSkillType(SkillType skillType) {
-        this.skillType = skillType;
-    }
-
-//    public List<UserProfile> getUserProfiles() {
-//        return userProfiles;
-//    }
-//
-//    public void setUserProfiles(List<UserProfile> userProfiles) {
-//        this.userProfiles = userProfiles;
-//    }
 
     @Override
     public String toString() {
