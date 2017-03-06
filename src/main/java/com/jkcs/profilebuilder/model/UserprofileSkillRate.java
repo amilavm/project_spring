@@ -9,26 +9,36 @@ import java.io.Serializable;
  * Created by AmilaVM on 2/6/2017.
  */
 @Entity
-public class UserprofileSkillRate {
+public class UserprofileSkillRate implements Serializable {
 
 
-
-    @EmbeddedId
-    private UserprofileSkillRateId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_userprofile", insertable = false, updatable = false, nullable = false)
+//    @JoinColumn(name = "fk_userprofile", insertable = false, updatable = false, nullable = false)
     private UserProfile userprofile;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_skill", insertable = false, updatable = false, nullable = false)
+//    @JoinColumn(name = "fk_skill", insertable = false, updatable = false, nullable = false)
     private Skills skill;
+
 
     private String rate;
 
-    public UserprofileSkillRate(){}
+    public UserprofileSkillRate() {
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public UserProfile getUserprofile() {
         return userprofile;
@@ -36,7 +46,6 @@ public class UserprofileSkillRate {
 
     public void setUserprofile(UserProfile userprofile) {
         this.userprofile = userprofile;
-        this.id.setUserprofileId(userprofile.getCandidate_id());
     }
 
     public Skills getSkill() {
@@ -45,7 +54,6 @@ public class UserprofileSkillRate {
 
     public void setSkill(Skills skill) {
         this.skill = skill;
-        this.id.setSkillId(skill.getId());
     }
 
     public String getRate() {
@@ -54,5 +62,21 @@ public class UserprofileSkillRate {
 
     public void setRate(String rate) {
         this.rate = rate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserprofileSkillRate)) return false;
+
+        UserprofileSkillRate that = (UserprofileSkillRate) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
