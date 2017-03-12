@@ -34,28 +34,17 @@ public class UserProfile {
 //    @JoinTable(name = "users_with_skills")
 //    private List<Skills> skills;
 
-    @OneToMany(mappedBy = "userprofile" , fetch = FetchType.LAZY ,
+    @OneToMany(mappedBy = "userprofile" , fetch = FetchType.EAGER ,
     cascade = {CascadeType.PERSIST , CascadeType.MERGE})
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE ,
     org.hibernate.annotations.CascadeType.DELETE})
     private List<UserprofileSkillRate> skills;
 
-//    @OneToOne
-//    @JoinColumn(name = "CANDIDATE_ID")
-//    private CandidateUser candidateUser;
+
 
     public UserProfile()  {
 
     }
-
-
-//    public CandidateUser getCandidateUser() {
-//        return candidateUser;
-//    }
-//    public void setCandidateUser(CandidateUser candidateUser) {
-//        this.candidateUser = candidateUser;
-//    }
-
     public Integer getCandidate_id() {
         return candidate_id;
     }

@@ -19,18 +19,21 @@ public class Skills {
     private String skillName;
     //private String skillRate;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "Skill_type_id")
-   // private SkillType skillType;
+    private SkillType skillType;
 
-//    @ManyToMany(mappedBy = "skills")
-//    private List<UserProfile> userProfiles;
+
 
     @OneToMany(mappedBy = "skill" , fetch = FetchType.LAZY,
     cascade = {CascadeType.PERSIST , CascadeType.MERGE})
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
     org.hibernate.annotations.CascadeType.DELETE})
     private List<UserprofileSkillRate> userprofiles;
+
+
+    @OneToMany(mappedBy = "skills" ,cascade = CascadeType.ALL)
+    private List<JobTemplateSkillRate> jobTemplateSkillRates;
 
     public Skills(){}
 
@@ -50,7 +53,29 @@ public class Skills {
         this.skillName = skillName;
     }
 
+    public SkillType getSkillType() {
+        return skillType;
+    }
 
+    public void setSkillType(SkillType skillType) {
+        this.skillType = skillType;
+    }
+
+    public List<UserprofileSkillRate> getUserprofiles() {
+        return userprofiles;
+    }
+
+    public void setUserprofiles(List<UserprofileSkillRate> userprofiles) {
+        this.userprofiles = userprofiles;
+    }
+
+    public List<JobTemplateSkillRate> getJobTemplateSkillRates() {
+        return jobTemplateSkillRates;
+    }
+
+    public void setJobTemplateSkillRates(List<JobTemplateSkillRate> jobTemplateSkillRates) {
+        this.jobTemplateSkillRates = jobTemplateSkillRates;
+    }
 
     @Override
     public String toString() {
