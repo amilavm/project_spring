@@ -2,21 +2,14 @@ package com.jkcs.profilebuilder.controller;
 
 import com.jkcs.profilebuilder.model.*;
 import com.jkcs.profilebuilder.repository.*;
-import com.jkcs.profilebuilder.service.TestService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Amila on 1/24/17.
@@ -47,6 +40,18 @@ public class HomeController {
     @Autowired
     public void setUserProfileSkillRateRepository(UserProfileSkillRateRepository userProfileSkillRateRepository) {
         this.userProfileSkillRateRepository = userProfileSkillRateRepository;
+    }
+
+    private ALdetailRepository aLdetailRepository;
+    @Autowired
+    public void setaLdetailRepository(ALdetailRepository aLdetailRepository) {
+        this.aLdetailRepository = aLdetailRepository;
+    }
+
+    private OLdetailRepository oLdetailRepository;
+    @Autowired
+    public void setoLdetailRepository(OLdetailRepository oLdetailRepository) {
+        this.oLdetailRepository = oLdetailRepository;
     }
     //    @Autowired
 //    private UserProfileRepositoryImpl userProfileRepository;
@@ -104,57 +109,79 @@ public class HomeController {
     @RequestMapping(value = "/userprofile2/", method = RequestMethod.POST)
     public ResponseEntity<Void> createUserProfile(@RequestBody UserProfile userprofile, UriComponentsBuilder ucBuilder){
         System.out.println("Creating Userprofile " +userprofile.getFirstname()+" "+userprofile.getLastname());
-        System.out.println(userprofile.getCandidate_id());
+        System.out.println(userprofile.getId());
         UserProfile up = userProfileRepository.save(userprofile);
 
         UserprofileSkillRate a = new UserprofileSkillRate();
         a.setUserprofile(up);
        // a.setSkill(list);
         userProfileSkillRateRepository.save(a);
-        System.out.println(up.getCandidate_id());
+        System.out.println(up.getId());
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/userprofiles/{id}").buildAndExpand(userprofile.getCandidate_id()).toUri());
+        headers.setLocation(ucBuilder.path("/userprofiles/{id}").buildAndExpand(userprofile.getId()).toUri());
         return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
         }
 
     @RequestMapping(value = "/userprofile", method = RequestMethod.POST)
-    public ResponseEntity<UserprofileSkillRate> createUserProfile2(@RequestBody CustomUserprofileDetails customUserprofileDetails){
+    public ResponseEntity<UserprofileSkillRate> createUserProfile2(@RequestBody UserprofileSkillRate userprofileSkillRate){
 
-        UserProfile userProfile = new UserProfile();
-        BeanUtils.copyProperties(customUserprofileDetails,userProfile,"skillName","rate");
-
-        Skills skills = new Skills();
-        BeanUtils.copyProperties(customUserprofileDetails,skills,"firstname","lastname","email","password","confirmPassword","address","gender","country","dob","phone","rate");
+//        UserProfile userProfile = new UserProfile();
+//        BeanUtils.copyProperties(customUserprofileDetails,userProfile,"skillName","rate");
+//
+//        Skills skills = new Skills();
+//        BeanUtils.copyProperties(customUserprofileDetails,skills,"firstname","lastname","email","password","confirmPassword","address","gender","country","dob","phone","rate");
 
         //UserprofileSkillRate userprofileSkillRate = new UserprofileSkillRate();
         //BeanUtils.copyProperties(customUserprofileDetails,userprofileSkillRate,"firstname","lastname","email","password","confirmPassword","address","gender","country","dob","phone","skillName");
 
 
-        UserProfile userProfileSaved = userProfileRepository.save(userProfile);
-        Skills skillsSaved = skillsRepository.save(skills);
-
-        UserprofileSkillRate newUserprofileSkillRate = new UserprofileSkillRate();
-        newUserprofileSkillRate.setSkill(skills);
-        newUserprofileSkillRate.setUserprofile(userProfileSaved);
-        newUserprofileSkillRate.setRate(customUserprofileDetails.getRate());
-
-
-//        UserProfile userProfileUnSaved = userprofileSkillRate.getUserprofile();
-//        Skills skillsUnsaved = userprofileSkillRate.getSkill();
-//
-//        UserProfile userProfileSaved = userProfileRepository.save(userProfileUnSaved);
-//        //Skills skillsSaved = skillsRepository.save(skillsUnsaved);
+//        UserProfile userProfileSaved = userProfileRepository.save(userProfile);
+//        Skills skillsSaved = skillsRepository.save(skills);
 //
 //        UserprofileSkillRate newUserprofileSkillRate = new UserprofileSkillRate();
-//        newUserprofileSkillRate.setSkill(skillsUnsaved);
+//        newUserprofileSkillRate.setSkill(skills);
 //        newUserprofileSkillRate.setUserprofile(userProfileSaved);
-//        newUserprofileSkillRate.setRate(userprofileSkillRate.getRate());
+//        newUserprofileSkillRate.setRate(customUserprofileDetails.getRate());
+
+
+        UserProfile userProfileUnSaved = userprofileSkillRate.getUserprofile();
+        Skills skillsUnsaved = userprofileSkillRate.getSkill();
+
+        ALdetail alDetailUnSaved = userprofileSkillRate.getUserprofile().getAlDetail();
+        ALdetail aLdetailSaved = aLdetailRepository.save(alDetailUnSaved);
+
+        OLdetail olDetailUnSaved = userprofileSkillRate.getUserprofile().getOlDetail();
+        OLdetail olDetailSaved = oLdetailRepository.save(olDetailUnSaved);
+
+        UserProfile userProfileSaved = userProfileRepository.save(userProfileUnSaved);
+
+        userProfileSaved.setAlDetail(aLdetailSaved);
+        userProfileSaved.setOlDetail(olDetailSaved);
+
+        UserprofileSkillRate newUserprofileSkillRate = new UserprofileSkillRate();
+        newUserprofileSkillRate.setUserprofile(userProfileSaved);
+        Skills s;
+
+        //with adding a new skill
+        if (userprofileSkillRate.getSkill().getId() == null){
+            Skills skillsSaved = skillsRepository.save(skillsUnsaved);
+            s = skillsSaved;
+            System.out.println("creating profile of "+userProfileSaved.getFirstname()+ " , with creating new skill "+skillsSaved.getSkillName());
+        }
+
+        //without adding a new skill(just selecting an existing skill)
+        else{
+            s = skillsUnsaved;
+            System.out.println("Creating Userprofile " +userprofileSkillRate.getUserprofile().getFirstname()+" "+userprofileSkillRate.getUserprofile().getLastname());
+        }
+        newUserprofileSkillRate.setSkill(s);
+        newUserprofileSkillRate.setRate(userprofileSkillRate.getRate());
 
         //UserType t =UserType.valueOf("we");
 
-        userProfileSkillRateRepository.save(newUserprofileSkillRate);
+        UserprofileSkillRate userprofileSkillRate1 = userProfileSkillRateRepository.save(newUserprofileSkillRate);
 
-        return new ResponseEntity<UserprofileSkillRate>(newUserprofileSkillRate, HttpStatus.OK);
+        return new ResponseEntity<UserprofileSkillRate>(userprofileSkillRate1, HttpStatus.OK);
     }
     //------Update A User------
     @RequestMapping(value = "/userprofile/{id}", method = RequestMethod.PUT)

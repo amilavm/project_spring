@@ -58,15 +58,15 @@ public class SkillController {
     //----cfeate a skill----//
 @RequestMapping(value = "/userprofile/skill/", method = RequestMethod.POST)
 public ResponseEntity<Void> createSkill(@RequestBody Skills skill){
-    System.out.println(skill.getId());
+    //System.out.println(skill.getId());
 
     Skills sk = skillsRepository.save(skill);
+    System.out.println("created skill "+sk.getSkillName());
+   // UserprofileSkillRate a = new UserprofileSkillRate();
 
-    UserprofileSkillRate a = new UserprofileSkillRate();
-
-    UserProfile up = userProfileRepository.findOne(1);
-    a.setSkill(sk);
-    userProfileSkillRateRepository.save(a);
+   // UserProfile up = userProfileRepository.findOne(1);
+   // a.setSkill(sk);
+    //userProfileSkillRateRepository.save(a);
 
     return new ResponseEntity<Void>(HttpStatus.CREATED);
 
